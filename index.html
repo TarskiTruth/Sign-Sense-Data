@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Sense · Data Collection</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      .orientation-dialog{width:min(1100px,calc(100% - 24px));max-height:calc(100vh - 24px);padding:0;background:#111b30;color:#edf3ff;border:1px solid #536a99}.orientation-card{padding:32px;min-width:min(460px,100%)}.role-actions,.signer-actions{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}.orientation-workspace{padding:22px}.orientation-header{display:flex;justify-content:space-between;align-items:start;gap:20px;margin-bottom:20px}.orientation-header h2{font-size:1.6rem}.orientation-layout{display:grid;grid-template-columns:1.2fr .8fr;gap:22px}.orientation-camera{position:relative;min-height:370px;background:#050914;border-radius:12px;overflow:hidden}.orientation-camera video,.orientation-camera canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.orientation-camera video{transform:scaleX(-1)}.orientation-layout label{margin:0 0 15px}.orientation-layout textarea{min-height:78px;resize:vertical;background:#17223a;color:#f5f8ff;border:1px solid #45577f;border-radius:8px;padding:10px}.paste-target{margin-top:12px}.paste-target input{display:block;margin-top:7px}.orientation-layout img{display:block;width:100%;max-height:245px;object-fit:contain;background:#080d18;border-radius:8px;margin:12px 0}.reference-instruction{padding:16px;background:#17223a;border-radius:12px}.reference-instruction #signer-reference-image{width:100%;height:auto;aspect-ratio:16/9;max-height:none;object-fit:fill}.reference-instruction #signer-tilt-instruction{font-size:1.2rem;font-weight:700;line-height:1.45;color:#a7f0cd}.countdown{position:absolute;inset:0;display:grid;place-items:center;background:#071020aa;color:white;font-size:6rem;font-weight:800}.countdown[hidden]{display:none!important}.error{color:#ff9da5;min-height:1.2em}@media(max-width:720px){.orientation-layout{grid-template-columns:1fr}.orientation-camera{min-height:260px}.orientation-card{padding:22px;min-width:0}.orientation-header{flex-direction:column}.orientation-dialog{width:calc(100% - 12px)}}
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header>
+        <div><p class="eyebrow">AUSLAN DATA COLLECTION</p><h1>Sign Sense</h1></div>
+        <div class="session-person" id="session-person"></div>
+      </header>
+      <section class="controls" aria-label="Recording controls">
+        <label>Current sign <select id="sign-select" aria-label="Choose the sign to work on"></select></label>
+        <button id="record-button" class="record">● Record 6 seconds</button>
+      </section>
+      <section class="capture-grid">
+        <article class="panel live-panel"><div class="panel-heading"><h2>Live tracking</h2><span id="tracking-status">Preparing camera…</span></div><div class="video-wrap"><video id="camera" autoplay muted playsinline></video><canvas id="overlay"></canvas><div id="capture-countdown" class="countdown" hidden></div></div></article>
+        <article class="panel reference-panel"><div class="panel-heading"><h2>Reference sign</h2><span id="reference-label"></span></div><p id="reference-error" class="error"></p><div id="reference-content" class="reference-content"></div><p id="orientation-instruction" class="orientation-prompt"></p></article>
+      </section>
+      <section class="bottom-grid"><article class="panel"><h2>Orientation progress</h2><p class="sample-total"><strong id="total-count">0</strong> recordings</p><ul id="sample-list" class="sample-list"><li>No samples recorded yet.</li></ul></article><article class="panel"><h2>Data destination</h2><code id="destination"></code><p class="muted">Untrimmed JSON contains all six seconds, including the wind-up. Trimmed JSON contains only the three-second signing window.</p></article></section>
+      <dialog id="review-dialog" class="review-dialog"><div class="review-header"><div><p class="eyebrow">REVIEW SIX-SECOND CAPTURE</p><h2>Keep or redo?</h2><p id="review-summary" class="muted"></p></div></div><video id="review-video" controls loop playsinline></video><div class="trim-actions"><button id="keep-recording" class="primary">Keep JSON</button><button id="redo-recording">Redo this orientation</button></div></dialog>
+    </main>
+    <dialog id="name-dialog"><form method="dialog" id="name-form"><p class="eyebrow">WELCOME</p><h2>Who is recording today?</h2><p>This name identifies your folder in <code>sessions/</code> and restores any completed orientations.</p><label>Your name <input id="recorder-name" required autocomplete="name" placeholder="e.g. Raina" /></label><button class="primary" value="continue">Start or resume session</button></form></dialog>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js"></script>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
