@@ -8,6 +8,12 @@ const root = __dirname;
 const sessionsRoot = path.join(root, "sessions");
 const port = Number(process.env.SIGN_SENSE_PORT || 8001);
 const mime = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8", ".json": "application/json; charset=utf-8", ".jpg": "image/jpeg", ".mp4": "video/mp4", ".webm": "video/webm" };
+const referenceSigns = new Set([
+  "my1", "my2", "name1", "name2", "yes", "thank_you", "stop", "sorry", "please", "okay", "no",
+  "how_are_you", "help", "hello", "bye", "you", "why", "who", "which", "where", "when", "what",
+  "love", "i", "how", "good", "bad", "at", "sister", "school", "person", "mother", "friend",
+  "father", "family", "brother", "baby",
+]);
 const safePart = (value) => /^[a-z0-9_-]+$/i.test(value) ? value : null;
 const send = (res, status, body, type = "application/json; charset=utf-8") => { res.writeHead(status, { "Content-Type": type }); res.end(body); };
 const body = (req) => new Promise((resolve, reject) => { const chunks = []; req.on("data", (chunk) => chunks.push(chunk)); req.on("end", () => resolve(Buffer.concat(chunks))); req.on("error", reject); });
@@ -75,7 +81,7 @@ http.createServer(async (req, res) => {
     if (url.pathname === "/api/references" && req.method === "GET") {
       const referenceRoot = path.join(root, "reference");
       const files = (await fsp.readdir(referenceRoot, { withFileTypes: true }))
-        .filter((entry) => entry.isFile() && path.extname(entry.name).toLowerCase() === ".mp4")
+        .filter((entry) => entry.isFile() && path.extname(entry.name).toLowerCase() === ".mp4" && referenceSigns.has(path.basename(entry.name, path.extname(entry.name)).toLowerCase()))
         .map((entry) => ({ label: path.basename(entry.name, path.extname(entry.name)), filename: entry.name, url: `/reference/${encodeURIComponent(entry.name)}` }))
         .sort((a, b) => a.filename.localeCompare(b.filename, undefined, { sensitivity: "base" }));
       return send(res, 200, JSON.stringify(files));
